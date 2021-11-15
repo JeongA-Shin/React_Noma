@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="btn">click me</button>
+    <div>Total Click</div>
+    <span id='counter'></span>
+</body>
+<script>
+    let counter=0;
+    const $button=document.querySelector("#btn");
+    const $counter=document.querySelector('#counter');
+    const handleClick=()=>{
+        counter+=1;
+        $counter.textContent=counter;
+        console.log("I have been clicked");
+    }
+    $button.addEventListener('click', handleClick);
+</script>
+</html>
