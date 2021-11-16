@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react</title>
+</head>
+<body>
+    <div id=root></div>
+    <!--리액트를 쓰기 위해 import 해와야 함 1.React 2. React-Dom-->
+    <!-- React.js는 엔진, 즉 html을 우리 대신 생성해줌
+         Reeact Dom은 react.js로 생성된 요소들을 html body에 둘 수 있도록 해줌, 즉 react element를 html에 둘 수 있도록 함-->
+    <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script> <!-- JSX 를 쓰기 위해서는 Babel이 import 되어 있어야 함-->
+    <script type="text/babel">
+         const root=document.querySelector('#root');
+         
+         //컴포넌트1
+         function MinutesToHours(){ //MinutesToHours 컴포넌트 안에서 발생하는 일들
+            //내가 쓸 STATE 선언. (걍 내가 다른 코드에서 let minutes;, let minutes=0; 이렇게 해주듯이 리액트에서는 React.useState(초깃값)형태로 하는 것)
+            //그리고 내가 하던 코드와는 다르게 해당 변수에 대한 modifier 함수도 있는 거임.
+            //state 변경(업데이트)는 오직 이 함수를 통해서만 가능함!
+            //const[state명, 해당 state 조작 함수명]=React.useState(state의 초깃값);
+            //해당 state 조작함수명(내가 조작할 내용);
+            const[amount,setAmount]=React.useState();//state의 디폴트 값은 그냥 비워둬도 됨//입력값을 저장할 state
+            const[flipped,setFlipped]=React.useState(false);
+
+            const onChange=(event)=>{//event는 js에서와 동일
+                //console.log(event.target.value);
+                //event.target.value는 입력값을 가르키게 됨
+                //state 값 업데이트(데이터 값 업데이트)
+                setAmount(event.target.value);//리렌더링
+            }
+
+            const reset=()=>setAmount(0);//minutes state에 대한 조작함수
+            const onFlip=()=>{
+                reset();
+                setFlipped((current)=>!current);
+            };//flip state에 대한 조작함수
+            //flipped 변수가(state가) true면 false로, false면 true로
+            //index_state.html 에서 설명한 것처럼 업데이트 내용을 함수로 해야 더 안정적임
+
+            return(
+                 <div>
+                     <div>
+                     {/* 우리는 html이 아니라 JSX를 쓰고 있다. class는 html의 문법. 따라서 JSX에서는 className이라고 속성을 설정해야 함*/}
+                     {/*분을 시간으로, 시간을 분으로 바꾸어주기*/}
+                     <label htmlFor="minutes">Minutes</label> {/*class가 아닌 className을 쓰는 이유와 마찬가지로 for이 아니라 htmlFor이 속성명임*/}
+                     <input value={flipped? amount*60 : amount} onChange={onChange} id="minutes" placeholder="Minutes" type="number" disabled={flipped==true}/>
+                     {/*인풋의 value는 어떤 값을 화면에 나타내는지에 대한 속성임. 즉 minutes라는 state를 화면 내의 입력칸에서 보여줌*/}
+                     {/* onChange: JSX에서 입력칸의 입력에 대해 발생하는 이벤트 리스너. 입력값을 감지함. onChange={콜백함수명}*/}
+                     <h4> you want to convert {amount}. right?</h4>
+                     <label htmlFor="hours">Hours</label>
+                     <input value={flipped? amount: Math.round(amount/60)} onChange={onChange} id="hours" placeholder="Hours" type="number" disabled={flipped==false}/>
+                     {/*인풋의 value는 어떤 값을 화면에 나타내는지에 대한 속성임!!!. 즉 minutes라는 state를 60으로 나눈 값을 화면 내의 입력칸에서 보여줌
+                        , disabled가 false 값이면 enabled임, 현재 flipped의 초깃값이 false임*/}
+                     </div>
+                     <button onClick={reset}> Reset </button>
+                     <button onClick={onFlip}> Flip</button>
+                    {/* jsx에서 버튼에 달린 이벤트리스너는 onClick임. 그리고 이 이벤트리스너={해당되는 콜백함수} 형태로 써줌 */}
+                </div>
+             )
+         }
+
+         //컴포넌트2 - 챌린지
+         function kMToMiles(){
+             return( 
+                 <div>
+                     <h3>KM 2 MILES</h3>
+                 </div>
+                );
+         }
+
+
+
+         //하나의 컴포넌트(App)안에 다른 컴포넌트들 렌더링하기
+         function App(){ //c++의 main()역할
+            const [itemIndex,setItemIndex]=React.useState("start");
+            const onSelect=(event)=>{
+                console.log(event.target.value);//이러면 우리가 option에 주었던 value값들을 확인 가능
+                setItemIndex(event.target.value); //선택된 태그의 value값을 itemIndex 값으로 준다
+            }
+
+             return (
+                 <div>
+                     <h1>Super Converter</h1>{/*렌더링할 컴포넌트를 태그 형식으로 표현함*/}
+                        <select value={itemIndex} onChange={onSelect}> {/*value는 보여지거나 이 태그가 가지는 값, select는 React에 속한 애가 아님. 그냥 html임*/}
+                        {/*onChange는 select태그의 이벤트 리스너. onChange={해당 콜백함수}*/}
+                        {/*selecct는 option 태그를 안에 가지고 있음*/}
+                            <option value="start"> Select Options </option>
+                            <option value="0">  Minutes & Hours</option>
+                            <option value="1"> KM & Miles </option>
+                        </select>
+                        {/*JSX 내에서 JS를 쓰고 싶다면 { } 안에 구현해주면 된다*/}
+                        {(itemIndex=="start")? "Please select your choice":null}
+                        {(itemIndex=="0")?<MinutesToHours/>:null}
+                        {(itemIndex=="1")?<kMToMiles/>:null}
+                 </div>
+             );
+         }
+
+         ReactDOM.render(<App/>,root);
+        
+    </script>
+</body>
+</html>
